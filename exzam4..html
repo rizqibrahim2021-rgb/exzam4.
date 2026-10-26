@@ -1,0 +1,2600 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرخصة المهنية عام — اختبار تفاعلي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Almarai:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', 'Almarai', sans-serif;
+        }
+
+        body {
+            background-color: #0b1329;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* شريط التحكم الشامل: التنقل + التصدير */
+        .main-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #111936;
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 1px solid #1f2d5a;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn-ctrl {
+            border: none;
+            padding: 9px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .btn-nav { background: #1e3a8a; }
+        .btn-nav:hover { background: #2563eb; }
+        .btn-nav:disabled { background: #334155; cursor: not-allowed; opacity: 0.6; }
+
+        .btn-pdf { background: #0284c7; }
+        .btn-pdf:hover { background: #0369a1; }
+
+        .btn-img { background: #10b981; }
+        .btn-img:hover { background: #059669; }
+
+        .divider {
+            width: 1px;
+            height: 25px;
+            background: #334155;
+            margin: 0 5px;
+        }
+
+        #quiz-app {
+            width: 100%;
+            max-width: 960px;
+            background: #ffffff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            border: 4px solid #0f2c59;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .top-header {
+            background: radial-gradient(circle at center, #103b70 0%, #081d3d 100%);
+            padding: 15px 30px 20px 30px;
+            color: #ffffff;
+            border-bottom: 5px solid #38bdf8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header-center { text-align: center; }
+
+        .main-title {
+            font-size: 34px;
+            font-weight: 900;
+            color: #ffffff;
+            line-height: 1.2;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+        }
+
+        .sub-title {
+            color: #38bdf8;
+            font-size: 16px;
+            font-weight: 700;
+            margin: 2px 0;
+        }
+
+        .author-name {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .header-icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            height: 8px;
+            width: 100%;
+        }
+
+        .progress-bar {
+            background: #10b981;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 35px 0 35px;
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f2c59;
+        }
+
+        .card-body {
+            padding: 15px 35px 25px 35px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .question-card-container {
+            background: #ffffff;
+            border: 2.5px solid #0f2c59;
+            border-radius: 16px;
+            padding: 15px 20px;
+            box-shadow: 0 6px 15px rgba(15, 44, 89, 0.06);
+        }
+
+        .question-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .badge-q-tag {
+            background: #0f2c59;
+            color: #ffffff;
+            padding: 5px 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .q-text-content {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: right;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            border-color: #0284c7;
+            background: #f0f9ff;
+            transform: translateY(-2px);
+        }
+
+        .opt-letter {
+            width: 32px;
+            height: 32px;
+            background: #e2e8f0;
+            color: #0f2c59;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .opt-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            flex-grow: 1;
+            padding: 0 12px;
+        }
+
+        .option-btn.correct {
+            background: #ecfdf5 !important;
+            border-color: #10b981 !important;
+        }
+        .option-btn.correct .opt-letter {
+            background: #10b981 !important;
+            color: #ffffff !important;
+        }
+
+        .option-btn.wrong {
+            background: #fef2f2 !important;
+            border-color: #ef4444 !important;
+        }
+        .option-btn.wrong .opt-letter {
+            background: #ef4444 !important;
+            color: #ffffff !important;
+        }
+
+        .bottom-footer {
+            background: linear-gradient(115deg, #07172f 0%, #122d50 51%, #07172f 100%);
+            border-top: 4px solid #d4af37;
+            padding: 10px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .footer-sec {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-sec-center { text-align: center; padding: 6px 18px; border-left: 1px solid rgba(212,175,55,.35); border-right: 1px solid rgba(212,175,55,.35); }
+        .footer-owner { font-size: 17px; font-weight: 900; color: #f6d77e; text-shadow: 0 1px 2px rgba(0,0,0,.2); }
+
+        .footer-icon-circle {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(145deg, #fff1b7 0%, #d4af37 55%, #a77c20 100%);
+            border: 1.5px solid #ffe4a3;
+            box-shadow: 0 2px 10px rgba(212,175,55,0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .footer-text-title {
+            font-size: 11px;
+            color: #f0d58a;
+            font-weight: 700;
+        }
+
+        .footer-text-val {
+            font-size: 14px;
+            font-weight: 800;
+            direction: ltr;
+            color: #fff9e8;
+        }
+        .bottom-footer a.footer-text-val:hover { color: #f6d77e; text-decoration: underline !important; }
+        @media (max-width: 620px) {
+            .bottom-footer { gap: 14px; flex-wrap: wrap; justify-content: center; padding: 15px; }
+            .footer-sec-center { order: -1; width: 100%; border-left: 0; border-right: 0; border-bottom: 1px solid rgba(212,175,55,.3); padding-bottom: 10px; }
+            .footer-text-val { font-size: 12px; }
+        }
+
+        #result-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .result-score {
+            font-size: 48px;
+            font-weight: 900;
+            color: #10b981;
+            margin: 15px 0;
+        }
+
+        .btn-restart {
+            background: #0f2c59;
+            color: #ffffff;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        @media print {
+            body { background: none; padding: 0; }
+            .main-controls, .progress-bar-container, .status-row { display: none !important; }
+            #quiz-app { box-shadow: none; border: 2px solid #0f2c59; max-width: 100%; }
+        }
+
+        /* واجهة مشاركة حديثة مستوحاة من القالب المرجعي */
+        :root { --gold:#d4af37; --gold-soft:#f7e4a2; --navy:#071b38; }
+        body { background:radial-gradient(ellipse at 50% 0%,#19365e 0%,#08142a 58%,#050c1b 100%); }
+        .main-controls {max-width:980px;border:1px solid #b99644;border-radius:22px;background:linear-gradient(130deg,#101e39,#0c1730);box-shadow:0 16px 40px #0006;padding:15px;gap:9px;}
+        .btn-ctrl {border-radius:12px;min-height:44px;box-shadow:inset 0 1px #ffffff25;}
+        .btn-ctrl:focus-visible,.share-action:focus-visible {outline:3px solid #f9d67f;outline-offset:3px;}
+        .btn-share-wa {background:linear-gradient(125deg,#128c50,#25d366);}
+        .btn-share-tg {background:linear-gradient(125deg,#1479a8,#2aabee);}
+        .btn-share-img {background:linear-gradient(125deg,#78571b,#b88d35);border:1px solid #f6d77e;}
+        #quiz-app {border-color:#b59649;box-shadow:0 25px 65px #0009;}
+        .top-header {border-bottom-color:var(--gold);}
+        .main-title {text-shadow:0 3px 14px #0005;}
+        .question-card-container {border-color:#b9974d;box-shadow:0 6px 20px #9e792018;}
+        .badge-q-tag {background:linear-gradient(125deg,#081b38,#173f6d);border:1px solid var(--gold);color:#ffe6a0;}
+        .bottom-footer {border-top-color:var(--gold);}
+        .share-strip {width:min(960px,100%);margin:0 auto 18px;background:#0f2242;border:1px solid #a98b47;border-radius:18px;padding:14px 18px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;color:#f5e5b6;box-shadow:0 10px 28px #0004;}
+        .share-strip strong {font-weight:900;font-size:14px;}
+        .share-action {color:white;border:0;border-radius:12px;padding:10px 18px;font:800 14px Cairo, sans-serif;cursor:pointer;}
+        .share-action.wa {background:#138d56}.share-action.tg {background:#218fc5}.share-action.img {background:#9a712c}.share-action.copy,.btn-copy {background:linear-gradient(120deg,#8a631d,#ba903f);color:white;border:1px solid #e4bb61}
+        #share-feedback {width:100%;text-align:center;font-size:12px;color:#ffdd8e;min-height:1em;}
+        @media(max-width:650px){.main-controls{border-radius:17px}.btn-ctrl{flex:1 1 140px;justify-content:center}.share-strip{padding:12px}.share-action{flex:1 1 130px}.q-text-content{font-size:17px}.options-grid{grid-template-columns:1fr}.top-header{padding:14px 10px}.main-title{font-size:24px}.bottom-footer{overflow-wrap:anywhere}}
+        .option-btn.correct .opt-text::after { content:"  ✅"; font-size:21px; }
+
+        .btn-pro { background: linear-gradient(135deg,#6d28d9,#0ea5e9); border: 1px solid rgba(255,255,255,.18); }
+        .btn-pro:hover { filter: brightness(1.08); }
+        .btn-pro.active { background: linear-gradient(135deg,#4c1d95,#0369a1); box-shadow: 0 0 0 2px rgba(234,203,120,.35) inset; }
+
+        #pro-student-screen { display:none; padding: 16px 34px 28px; }
+        .student-hero {
+            background: linear-gradient(135deg, #0b2548 0%, #113c70 60%, #0a2342 100%);
+            border: 2px solid #d4af37;
+            border-radius: 22px;
+            padding: 18px 20px;
+            color: #fff;
+            box-shadow: 0 18px 35px rgba(11,37,72,.18);
+            margin-bottom: 16px;
+        }
+        .student-hero-top { display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; }
+        .student-hero-title { font-size: 24px; font-weight: 900; color:#fff; }
+        .student-hero-sub { font-size: 14px; color:#f8dd96; font-weight:800; margin-top:4px; }
+        .student-hero-badge { background: linear-gradient(135deg,#f7d87b,#c59222); color:#10243f; border-radius:999px; padding:10px 16px; font-size:13px; font-weight:900; box-shadow:0 6px 15px rgba(212,175,55,.25); }
+        .student-q-card {
+            background: linear-gradient(180deg,#ffffff 0%, #f7fbff 100%);
+            border: 2px solid #cae3fb;
+            border-right: 8px solid #d4af37;
+            border-radius: 22px;
+            padding: 22px 24px;
+            margin-bottom: 14px;
+            box-shadow: 0 8px 22px rgba(12,74,124,.08);
+        }
+        .student-q-head { display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:12px; flex-wrap:wrap; }
+        .student-kicker { color:#0c4a7c; font-size:14px; font-weight:900; }
+        .student-q-badge {
+            background: linear-gradient(135deg,#0f2c59,#1d4f91);
+            color:#f3d47a; border:1.5px solid #d4af37; border-radius:999px;
+            padding:8px 16px; font-size:14px; font-weight:900;
+        }
+        .student-q-text { color:#0f172a; font-size:28px; line-height:1.8; font-weight:900; }
+        .student-options-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+        .student-option {
+            position:relative;
+            background: linear-gradient(180deg,#ffffff 0%, #f8fbff 100%);
+            border:2px solid #d7e6f5;
+            border-radius:20px;
+            padding:16px 18px 16px 18px;
+            cursor:pointer;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+            display:flex; align-items:flex-start; gap:14px;
+            min-height: 92px;
+            box-shadow: 0 6px 18px rgba(15,44,89,.06);
+        }
+        .student-option:hover:not([disabled]) { transform: translateY(-3px); border-color:#72b0e3; box-shadow:0 12px 25px rgba(15,44,89,.10); }
+        .student-option[disabled] { cursor: default; }
+        .student-option-letter {
+            width:42px;height:42px;flex:0 0 42px;border-radius:14px;
+            background:linear-gradient(135deg,#eef4fa,#d9e8f6); color:#0f2c59;
+            display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;
+            border:1px solid #c5d8ea;
+        }
+        .student-option-text { flex:1; color:#1e293b; font-size:18px; line-height:1.75; font-weight:800; }
+        .student-option.correct { border-color:#0e9f6e !important; background:linear-gradient(180deg,#f0fdf7,#e8fff4); }
+        .student-option.correct .student-option-letter { background:linear-gradient(135deg,#16a34a,#059669); color:#fff; border-color:#0b8a59; }
+        .student-option.correct::after {
+            content:'✅ الإجابة الصحيحة'; position:absolute; top:10px; left:12px;
+            background:#0f9f6c; color:#fff; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:900;
+        }
+        .student-option.wrong { border-color:#ef4444 !important; background:linear-gradient(180deg,#fff5f5,#fff0f0); }
+        .student-option.wrong .student-option-letter { background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; border-color:#c81f1f; }
+        .student-action-row { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:16px 0 12px; }
+        .student-action-btn {
+            border:0; border-radius:16px; padding:12px 18px; cursor:pointer; color:#fff;
+            font: 900 14px Cairo, sans-serif; box-shadow:0 10px 18px rgba(15,44,89,.12);
+        }
+        .student-action-btn.copy { background:linear-gradient(135deg,#8a631d,#c49328); }
+        .student-action-btn.share { background:linear-gradient(135deg,#0f766e,#0ea5a3); }
+        .student-action-btn.answer { background:linear-gradient(135deg,#1d4ed8,#2563eb); }
+        .student-action-btn.image { background:linear-gradient(135deg,#7c3aed,#a855f7); }
+        .student-encourage {
+            background: linear-gradient(135deg,#fff8e4 0%, #fff4d5 100%);
+            border: 1px solid #efcf72;
+            color:#6b4f12;
+            border-radius:18px;
+            padding:14px 18px;
+            font-size:16px;
+            font-weight:900;
+            text-align:center;
+            box-shadow:0 8px 18px rgba(197,146,34,.08);
+        }
+        .student-encourage.success { background:linear-gradient(135deg,#e9fff4 0%,#dcfce7 100%); border-color:#75d2a6; color:#065f46; }
+        .student-encourage.retry { background:linear-gradient(135deg,#fff5f5 0%,#fef2f2 100%); border-color:#f3a1a1; color:#991b1b; }
+        .student-copy-feedback { text-align:center; font-size:12px; color:#7a6329; min-height:1em; margin-top:6px; font-weight:800; }
+        @media(max-width:800px){ .student-options-grid{grid-template-columns:1fr;} .student-q-text{font-size:23px;} }
+        @media(max-width:650px){ #pro-student-screen{padding:14px 14px 24px;} .student-hero-title{font-size:20px} .student-q-text{font-size:20px} .student-option-text{font-size:16px;} }
+
+        @media print {.share-strip{display:none!important}}
+    /* ===== Professional PDF export styled like the supplied reference ===== */
+#pdf-export-root { display:none; }
+.pdf-export-root, .pdf-export-root * { box-sizing:border-box; font-family:'Cairo','Almarai',sans-serif; }
+.pdf-export-root { direction:rtl; }
+
+@page { size:A4 portrait; margin:6mm; }
+
+@media print {
+    html, body {
+        background:#ffffff !important;
+        margin:0 !important;
+        padding:0 !important;
+        min-height:auto !important;
+        display:block !important;
+    }
+    body > *:not(#pdf-export-root) { display:none !important; }
+    #pdf-export-root { display:block !important; }
+    #pdf-export-root .pdf-page {
+        width:198mm;
+        min-height:285mm;
+        margin:0 auto 4mm;
+        page-break-after:always;
+        break-after:page;
+        overflow:hidden;
+        background:#ffffff;
+        border:1.2px solid #9ab9d6;
+        position:relative;
+    }
+    #pdf-export-root .pdf-page:last-child {
+        page-break-after:auto;
+        break-after:auto;
+    }
+}
+
+.pdf-page {
+    display:flex;
+    flex-direction:column;
+    padding:0;
+}
+
+.pdf-topbar {
+    background:linear-gradient(90deg,#0c4f86 0%, #134f83 25%, #0d3f6a 60%, #0a3357 100%);
+    color:#ffffff;
+    min-height:18mm;
+    display:grid;
+    grid-template-columns:24mm 1fr 44mm;
+    align-items:center;
+    padding:0 5mm;
+    border-bottom:1px solid #0c3860;
+}
+
+.pdf-top-pill {
+    justify-self:start;
+    width:max-content;
+    border:1.6px solid rgba(255,255,255,.8);
+    color:#ffffff;
+    border-radius:999px;
+    padding:2px 9px;
+    font-size:9.5px;
+    font-weight:900;
+    line-height:1.4;
+}
+
+.pdf-title-wrap {
+    text-align:center;
+    line-height:1.35;
+}
+
+.pdf-main-title {
+    font-size:14px;
+    font-weight:900;
+    color:#ffffff;
+}
+
+.pdf-sub-title {
+    font-size:8.8px;
+    font-weight:800;
+    color:#d5efff;
+    margin-top:1px;
+}
+
+.pdf-meta-top {
+    justify-self:end;
+    text-align:left;
+    font-size:8.5px;
+    font-weight:800;
+    color:#ffdf8a;
+    line-height:1.5;
+}
+
+.pdf-page-content {
+    padding:3.5mm 4mm 2.5mm;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+}
+
+.pdf-grid {
+    flex:1;
+    min-height:0;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:2.6mm 3mm;
+    align-content:start;
+    overflow:hidden;
+}
+
+.pdf-card {
+    position:relative;
+    border:1.15px solid #80abd0;
+    border-radius:7px;
+    padding:3.2mm 3mm 2.6mm;
+    background:#fbfdff;
+    box-shadow: inset 0 0 0 .5px rgba(255,255,255,.7);
+    break-inside:avoid;
+}
+
+.pdf-card-num {
+    position:absolute;
+    top:2.1mm;
+    left:2.2mm;
+    min-width:10.5mm;
+    text-align:center;
+    background:#ffffff;
+    border:1.2px solid #6b9fca;
+    border-radius:999px;
+    padding:0.5mm 2mm;
+    color:#184d7b;
+    font-size:8px;
+    font-weight:900;
+    line-height:1.3;
+}
+
+.pdf-card-title {
+    padding-left:13mm;
+    color:#0e4b81;
+    font-size:9.4px;
+    font-weight:900;
+    line-height:1.55;
+    margin-bottom:1.3mm;
+}
+
+.pdf-card-options {
+    border-top:1px dashed #cbdceb;
+    padding-top:1.4mm;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:1mm;
+}
+
+.pdf-card-option {
+    display:flex;
+    align-items:flex-start;
+    gap:1.6mm;
+    color:#183550;
+    font-size:7.8px;
+    font-weight:700;
+    line-height:1.5;
+}
+
+.pdf-card-letter {
+    width:5.2mm;
+    height:5.2mm;
+    flex:0 0 5.2mm;
+    border-radius:3px;
+    background:#e8f2fb;
+    border:1px solid #b8d0e7;
+    color:#0f426d;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:7.2px;
+    font-weight:900;
+    margin-top:.1mm;
+}
+
+.pdf-card-option-text {
+    flex:1;
+    min-width:0;
+}
+
+.pdf-bottom-note {
+    margin-top:3mm;
+    border:1.3px solid #ddb75a;
+    border-radius:6px;
+    min-height:18mm;
+    display:grid;
+    grid-template-columns:30mm 1fr 41mm;
+    align-items:center;
+    padding:2.2mm 3mm;
+    gap:3mm;
+    background:linear-gradient(180deg,#fffdfa 0%, #fffaf1 100%);
+}
+
+.pdf-bottom-note .qr-css {
+    width:21mm !important;
+    height:21mm !important;
+    border:2.2px solid #fff !important;
+    border-radius:3px !important;
+    margin:0 auto !important;
+    background:#fff !important;
+}
+.pdf-bottom-note .qr-css i { background:#000 !important; }
+
+.pdf-note-qr-wrap {
+    text-align:center;
+}
+.pdf-note-qr-label {
+    color:#0f456f;
+    font-size:6.8px;
+    font-weight:900;
+    margin-top:.8mm;
+}
+
+.pdf-note-center {
+    text-align:center;
+    line-height:1.65;
+}
+.pdf-note-main {
+    color:#8a6617;
+    font-size:8.1px;
+    font-weight:900;
+}
+.pdf-note-sub {
+    color:#375370;
+    font-size:7.1px;
+    font-weight:800;
+}
+
+.pdf-note-contact {
+    text-align:right;
+    line-height:1.8;
+}
+.pdf-note-contact .lbl {
+    color:#9b7524;
+    font-size:6.8px;
+    font-weight:900;
+}
+.pdf-note-contact .val {
+    color:#163a5a;
+    font-size:8.3px;
+    font-weight:900;
+    direction:ltr;
+}
+
+.pdf-footerbar {
+    background:linear-gradient(90deg,#0a3153 0%, #113f66 55%, #0a3153 100%);
+    min-height:10mm;
+    color:#ffffff;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    align-items:center;
+    padding:0 4mm;
+    gap:3mm;
+    border-top:1px solid #0a2c4a;
+}
+
+.pdf-footer-item {
+    display:flex;
+    align-items:center;
+    gap:1.8mm;
+    font-size:7.2px;
+    font-weight:800;
+    color:#e7f6ff;
+    min-width:0;
+}
+.pdf-footer-item.center { justify-content:center; text-align:center; }
+.pdf-footer-item.end { justify-content:flex-end; text-align:left; }
+.pdf-footer-icon {
+    width:4.6mm;
+    height:4.6mm;
+    border-radius:50%;
+    background:#f0c04d;
+    color:#113e63;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:6.5px;
+    font-weight:900;
+    flex:0 0 4.6mm;
+}
+.pdf-footer-text {
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+
+/* Answer marking and top/bottom contact information for PDF sheets */
+.pdf-topbar { grid-template-columns:22mm 1fr 48mm; }
+.pdf-meta-top { font-size:7.5px; line-height:1.75; direction:rtl; text-align:left; }
+.pdf-correct-option { background:#e8fbef; border:1px solid #20a66c; padding:1.1mm; border-radius:4px; }
+.pdf-correct-option .pdf-card-letter { background:#158752; color:#ffffff; border-color:#158752; }
+.pdf-correct-option .pdf-card-option-text { color:#095a36; font-weight:900; }
+.pdf-correct-mark { display:inline-block; margin-right:2mm; color:#047646; font-size:7.5px; font-weight:900; white-space:nowrap; }
+@media print { .pdf-correct-option { background:#e8fbef!important; } }
+
+/* Fix phone/username direction in exported PDF to match the card exactly */
+.pdf-ltr-inline{
+    direction:ltr !important;
+    unicode-bidi:isolate !important;
+    display:inline-block !important;
+    text-align:left !important;
+    white-space:nowrap !important;
+}
+.pdf-meta-top{
+    direction:rtl !important;
+}
+.pdf-meta-top .pdf-ltr-inline{
+    color:inherit;
+}
+.pdf-note-contact .val,
+.pdf-footer-text.phone,
+.pdf-footer-text.tg{
+    direction:ltr !important;
+    unicode-bidi:isolate !important;
+    display:inline-block !important;
+    text-align:left !important;
+    white-space:nowrap !important;
+}
+
+
+/* شريط بيانات التواصل الفاخر: سطر واحد ثابت أسفل كل صفحة PDF */
+.pdf-lux-footer {
+ display:flex!important; direction:rtl!important; justify-content:space-evenly!important;
+ align-items:center!important; gap:2mm!important; padding:1.4mm 4mm!important;
+ height:12mm!important; min-height:12mm!important; flex-shrink:0!important;
+ border-top:2px solid #cfa44b!important;
+ background:linear-gradient(100deg,#061a33,#133f6a 48%,#061a33)!important;
+}
+.pdf-lux-item{display:inline-flex;align-items:center;justify-content:center;gap:1.5mm;white-space:nowrap;
+ font-size:8.2px;font-weight:900;color:#fff6db;line-height:1.3;}
+.pdf-lux-name{color:#ffda79;font-size:9px}
+.pdf-lux-mark{display:inline-flex;align-items:center;justify-content:center;width:5.2mm;height:5.2mm;
+ border-radius:50%;color:#092a4a;background:#eac25b;font-size:8.5px;flex-shrink:0;}
+.pdf-lux-separator{height:5.5mm;width:1px;flex:none;background:rgba(247,211,128,.45)}
+.pdf-lux-footer .pdf-ltr-inline{direction:ltr!important;unicode-bidi:isolate!important;
+ display:inline-block!important;color:inherit!important;white-space:nowrap!important;}
+@media print{.pdf-lux-footer{break-inside:avoid!important;page-break-inside:avoid!important;}}
+
+/* ضمان ظهور شريط التواصل أسفل كل صفحة مطبوعة */
+@media print {
+  #pdf-export-root .pdf-page {
+    width:198mm!important;height:284mm!important;min-height:284mm!important;
+    max-height:284mm!important;display:flex!important;flex-direction:column!important;
+    margin:0!important; padding:0!important;overflow:hidden!important;
+    page-break-after:always!important;break-after:page!important;
+  }
+  #pdf-export-root .pdf-page:last-child {page-break-after:auto!important;break-after:auto!important;}
+  #pdf-export-root .pdf-topbar {flex:0 0 19mm!important;min-height:19mm!important;}
+  #pdf-export-root .pdf-page-content {flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;}
+  #pdf-export-root .pdf-grid {min-height:0!important;overflow:hidden!important;align-content:start!important;}
+  #pdf-export-root .pdf-footerbar.pdf-lux-footer {
+    display:flex!important;position:relative!important;flex:0 0 12mm!important;
+    height:12mm!important;min-height:12mm!important;width:100%!important;
+    visibility:visible!important;opacity:1!important;bottom:0!important;
+    background:#0b2b4c!important;color:#fff!important;
+    -webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;
+  }
+}
+
+/* PDF layout must have real A4 dimensions WHILE pagination is calculated. */
+#pdf-export-root {width:198mm!important;}
+#pdf-export-root .pdf-page {height:284mm!important;min-height:284mm!important;max-height:284mm!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;}
+#pdf-export-root .pdf-topbar {flex:0 0 19mm!important;min-height:19mm!important;}
+#pdf-export-root .pdf-page-content {flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;}
+#pdf-export-root .pdf-grid {flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;grid-auto-rows:max-content!important;align-content:start!important;}
+#pdf-export-root .pdf-footerbar.pdf-lux-footer {position:relative!important;flex:0 0 12mm!important;height:12mm!important;min-height:12mm!important;z-index:2!important;}
+@media print {#pdf-export-root .pdf-page {margin:0!important;}}
+
+
+/* PDF-only mode: hide every other interaction and leave just the all-cards PDF action */
+.pdf-only-controls { width:min(960px,100%);justify-content:center; }
+.pdf-only-button { font-size:17px; padding:13px 30px; justify-content:center; }
+#pro-student-screen .student-action-row, #result-screen .btn-restart { display:none!important; }
+@media print { .pdf-only-controls {display:none!important;} }
+
+        /* عبارة دعوة الانضمام داخل التذييل ـ تظهر في الشاشة والتصدير */
+        .bottom-footer { flex-wrap: wrap; row-gap: 12px; }
+        .footer-join-message {
+            flex: 0 0 100%; width:100%; order: 9; text-align:center;
+            padding:12px 8px 4px; margin-top:2px;
+            border-top:1px solid rgba(212,175,55,.5);
+            color:#f6d77e; font-size:clamp(14px, 1.9vw, 21px);
+            line-height:1.75; font-weight:900; letter-spacing:0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- أزرار التحكم الشاملة (التنقل + التصدير) -->
+    <div class="main-controls pdf-only-controls">
+        <button class="btn-ctrl btn-nav" id="btn-prev" type="button" onclick="prevQuestion()">➔ السابق</button>
+        <button class="btn-ctrl btn-nav" id="btn-next-top" type="button" onclick="nextQuestion()">التالي ⬅</button>
+        <button class="btn-ctrl btn-pdf pdf-only-button" type="button" onclick="exportToPDF()">📄 تصدير جميع البطاقات PDF</button>
+    </div>
+
+    <div id="quiz-app">
+        <div class="top-header">
+            <div class="header-icon-box">📖</div>
+            <div class="header-center">
+                <div class="main-title">الرخصة المهنية عام</div>
+                <div class="sub-title" style="max-width:690px;line-height:1.6;font-size:14px">المعيار الأول: الالتزام بالقيم الإسلامية الوسطية، وأخلاقيات المهنة، وتعزيز الهوية الوطنية</div>
+                <div class="author-name">إعداد / إبراهيم أبوزيد — اختبار المعيار الأول</div>
+                <div style="color:#f4cf74;font-size:13px;font-weight:900;margin-top:5px">#الرخصة-المهنية_عام</div>
+            </div>
+            <div class="header-icon-box">⏳</div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div id="quiz-screen">
+            <div class="status-row">
+                <span id="question-count">الأسئلة: 0</span>
+                <span id="score-count">النقاط: 0</span>
+            </div>
+
+            <div id="pro-student-screen">
+                <div class="student-hero">
+                    <div class="student-hero-top">
+                        <div>
+                            <div class="student-hero-title">شاشة السؤال الاحترافية</div>
+                            <div class="student-hero-sub">اقرأ السؤال جيدًا، ثم اختر الإجابة الصحيحة — أنت قادر على الحل 🌟</div>
+                        </div>
+                        <div class="student-hero-badge">🎯 فكّر أولاً ثم أجب</div>
+                    </div>
+                </div>
+                <div class="student-q-card">
+                    <div class="student-q-head">
+                        <div class="student-kicker">اختر الإجابة الأنسب من بين الخيارات التالية</div>
+                        <div class="student-q-badge" id="pro-q-badge">سؤال 1</div>
+                    </div>
+                    <div class="student-q-text" id="pro-q-text">نص السؤال...</div>
+                </div>
+                <div class="student-options-grid" id="pro-options-container"></div>
+                <div class="student-action-row">
+                    <button class="student-action-btn copy" onclick="copyQuestionOnly()">📋 نسخ السؤال والخيارات</button>
+                    <button class="student-action-btn share" onclick="shareStudentQuestion()">💬 مشاركة السؤال للطلاب</button>
+                    <button class="student-action-btn image" onclick="copyCurrentCardAsImage('professional')">📋 نسخها كصورة</button>
+                    <button class="student-action-btn answer" onclick="copyShareMessage()">✅ نسخ نسخة الإجابة الكاملة</button>
+                </div>
+                <div class="student-encourage" id="student-encourage">💡 شجّع طلابك على المحاولة: اختر الإجابة التي تراها صحيحة، ثم تحقّق من الحل.</div>
+                <div class="student-copy-feedback" id="student-copy-feedback"></div>
+            </div>
+
+            <div class="card-body" id="standard-card-body">
+                <div class="question-card-container">
+                    <div class="question-header-row">
+                        <div class="badge-q-tag" id="q-badge">جاهز للأسئلة</div>
+                        <div class="q-text-content" id="q-text">نص السؤال...</div>
+                    </div>
+                </div>
+
+                <div class="options-grid" id="options-container"></div>
+            </div>
+        </div>
+
+        <div id="result-screen">
+            <h2 style="font-size: 28px; color: #0f2c59; font-weight: 900;">اكتمل الاختبار بنجاح!</h2>
+            <div class="result-score" id="final-score">0 / 0</div>
+            <p id="result-message" style="font-size: 18px; font-weight: 700; color: #475569;"></p>
+            <button class="btn-restart" onclick="restartQuiz()">إعادة الاختبار 🔄</button>
+        </div>
+
+        <div class="bottom-footer">
+            <div class="footer-sec">
+                <div class="footer-icon-circle">📞</div>
+                <div>
+                    <div class="footer-text-title">رقم الهاتف</div>
+                    <div class="footer-text-val" dir="ltr">+966 55 783 1353</div>
+                </div>
+            </div>
+            <div class="footer-sec-center">
+                <div class="footer-owner">إبراهيم أبوزيد</div>
+                <div style="color:#eacb78;font-size:11px;font-weight:800">قناة الرخصة المهنية عام</div>
+            </div>
+            <div class="footer-sec" style="direction: ltr;">
+                <div class="footer-icon-circle">✈</div>
+                <div style="text-align: right;">
+                    <div class="footer-text-title">قناة الرخصة المهنية عام</div>
+                    <a class="footer-text-val" href="https://t.me/+ZakELIR9__g4NmU0" target="_blank" rel="noopener noreferrer" style="text-decoration:none;font-size:12px">t.me/+ZakELIR9__g4NmU0</a>
+                    <div class="footer-text-title">حساب تليجرام</div>
+                    <a class="footer-text-val" href="https://t.me/myibhistoricy" target="_blank" rel="noopener noreferrer" style="text-decoration:none;font-size:12px">@myibhistoricy</a>
+                </div>
+            </div>
+            <div class="footer-join-message">انضم الينا  واحصل على ملفات شاملة واختبارات إلكترونية شاملة</div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+    {
+        "num": 1,
+        "q": "أي من فروع علم النفس الآتية يهتم بدراسة التغيرات في سلوك الإنسان منذ لحظة تكوينه وحتى الوفاة؟",
+        "options": [
+            "علم النفس العام",
+            "علم النفس النمو",
+            "علم النفس الاجتماعي",
+            "علم النفس التربوي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 2,
+        "q": "الهدف الأساسي من دراسة علم النفس النمو من \"الناحية النظرية\" يتمثل في:",
+        "options": [
+            "معرفة التوقعات من الطفل وتهئته للتغيرات",
+            "الوقوف على استعدادات المتعلم والفروق الفردية",
+            "قياس مختلف مظاهر النمو وفق مقاييس علمية",
+            "إعداد المناهج بما يتناسب مع قدرات الطلاب"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 3,
+        "q": "عندما يقوم الباحث بدراسة أثر تقنية جديدة على التحصيل الدراسي لطلاب الرياضيات من خلال ضبط كافة العوامل الخارجية والتلاعب بالمتغير المستقل، فإنه يعتمد على:",
+        "options": [
+            "المنهج الإكلينيكي",
+            "المنهج الوصفي",
+            "المنهج التجريبي",
+            "المنهج التاريخي"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 4,
+        "q": "في دراسة تجريبية لمعرفة أثر تدريس الفصل باستخدام التقنيات الحديثة على تدني المستوى التحصيلي للرياضيات، يمثل \"استخدام أساليب تقنية في تدريس الرياضيات\" في هذه الدراسة:",
+        "options": [
+            "المتغير التابع",
+            "المتغير المستقل",
+            "المشكلة البحثية",
+            "النتيجة الإحصائية"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 5,
+        "q": "المنهج الذي يكشف عن دوافع الطفل الشعورية واللاشعورية ويعتبر \"اللعب\" فيه أداة بالغة القيمة للتشخيص والعلاج النفسي هو:",
+        "options": [
+            "المنهج الوصفي",
+            "المنهج التجريبي",
+            "المنهج الإكلينيكي",
+            "المنهج التاريخي"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 6,
+        "q": "عندما يدرس الباحث \"الظاهرة النفسية\" خلال فترة زمنية محددة لعينة من الأفراد (مثلاً دراسة النمو اللغوي لعينة من الأطفال من عمر 6 إلى 10 سنوات)، فإن هذا يسمى في المنهج الوصفي:",
+        "options": [
+            "الدراسات المسحية",
+            "الدراسات الارتباطية",
+            "الدراسات الطولية أو المستعرضة (الطولية)",
+            "دراسة الحالة"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 7,
+        "q": "دراسة الفروق اللغوية بين مجموعة أطفال في سن السادسة بطريقة المقارنة المباشرة في لحظة زمنية واحدة تُعد نموذجاً لـ:",
+        "options": [
+            "الدراسات الطولية",
+            "الدراسات المستعرضة",
+            "دراسة الحالة العميقة",
+            "المنهج الإكلينيكي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 8,
+        "q": "أي من العوامل الآتية يعتبر \"كعامل ذو تأثير مباشر\" على التكوين التشريحي والوظائف الفسيولوجية ويضع حدوداً للإمكانيات العقلية؟",
+        "options": [
+            "الغدد الصماء",
+            "البيئة الرحمية",
+            "الوراثة (Heredity)",
+            "المناخ والطقس"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 9,
+        "q": "الفرق الأساسي بين نوعي الغدد في جسم الإنسان أن الغدد الصماء تفرز هرموناتها:",
+        "options": [
+            "خارج الجسم عبر اللعابية والعرقية",
+            "مباشرة في الدم وله ارتباط وثيق بسلوك الإنسان",
+            "بطريقة غير مباشرة في القنوات الحيوية",
+            "بهدف إخراج السموم والفضلات فقط"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 10,
+        "q": "لماذا يسبق نمو الإناث نمو الذكور في مرحلة المراهقة؟",
+        "options": [
+            "لأن الذكور ينمفون بمعدل أبطأ في كافة المراحل",
+            "لأن البنات ينمون بسرعة أكبر ويصلن إلى سن المراهقة قبل الأولاد بعامين تقريباً",
+            "لأن الغدد الصماء عند الإناث تتوقف عن النمو مبكراً",
+            "لأن التداخل البيئي عند الذكور أبطأ"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 11,
+        "q": "ما هو التأثير الناتج عن نقص إفراز الغدة الدرقية أو انعدامه لدى الطفل؟",
+        "options": [
+            "زيادة مفرطة وسريعة في نمو العضلات الكبيرة",
+            "الضعف العقلـي والنمو التغذوي والنشاط المتأثر سلباً",
+            "اضطراب في نمو الأطراف السفلى فقط",
+            "سرعة مفرطة في النضج الانفعالي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 12,
+        "q": "إصابة الأم الحامل بمرض \"الهيموفيليا\" أو السل قد يؤدي لدى الطفل إلى:",
+        "options": [
+            "اضطرابات في الشخصية والتوافق العام وخوف وقلق مستمر",
+            "تسارع في النضج العقلي والمعرفي",
+            "زيادة مفرطة في الطول والوزن الأكاديمي",
+            "استقرار تام في النمو الانفعالي"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 13,
+        "q": "أثبتت الدراسات المتعلقة بالولادة المبتكرة (المبتسرة) أن:",
+        "options": [
+            "لها تأثير إيجابي على سرعة نمو الطفل الحركي",
+            "كلما نقصت فترة الحمل زادت نسبة الوفيات وتأثرت سرعة النمو",
+            "لا توجد أي فروق جوهرية بينها وبين الولادة الطبيعية",
+            "ترتبط دائماً بزيادة معدل الذكاء العام"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 14,
+        "q": "وفقاً لعوامل الطقس والمناخ، فإن معدل نمو أطفال الريف:",
+        "options": [
+            "أبطأ من أطفال المدن المزدحمة بالسكان",
+            "أسرع من أطفال المدen بسبب نقاء الهواء وتنفسه",
+            "يتطابق تماماً مع معدل نمو شعوب شمال أوروبا",
+            "يتأثر بالأشعة تحت الحمراء بشكل مباشر"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 15,
+        "q": "تتسم خصائص النمو الإنساني بأنها:",
+        "options": [
+            "عملية عشوائية غير منضبطة بقوانين",
+            "تسير بحسب نظام مطرد وسرعة غير ثابتة",
+            "تسير من الخاص إلى العام حصراً",
+            "تنفصل فيها جوانب النمو كلياً عن بعضها"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 16,
+        "q": "وفقاً لقوانين ومبادئ النمو، فإن اتجاه النمو الحركي البشري يكون:",
+        "options": [
+            "من الأطراف إلى المركز ومن الأسفل للأعلى",
+            "من الأعلى للأسفل ومن المركز للأطراف",
+            "من الكل إلى الجزء ثم يتوقف تماماً",
+            "عشوائياً لا يخضع لأي اتجاه ثابت"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 17,
+        "q": "عندما يتدرب الطفل على تحريك عضلات الذراعين قبل تحكمه بحركات الأصابع، فإن هذا يفسر وفق مبدأ:",
+        "options": [
+            "النمو من العام إلى الخاص",
+            "—",
+            "سير النمو من المركز إلى الأطراف (المرز)",
+            "مبدأ التداخل والتعقيد الشامل"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 18,
+        "q": "عند تدريس الأطفال الصغار، يجب البدء بعرض الكل (كالوسيلة التعليمية لجسم الإنسان ككل) ثم التطرق للتفاصيل الدقيقة، استناداً لمبدأ:",
+        "options": [
+            "النمو من العام إلى الخاص (أو الخاص المتميز)",
+            "مبدأ التباين والفروق الفردية",
+            "مبدأ التداخل في النمو",
+            "مبدأ الاستمرار والديناميكية"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 19,
+        "q": "أي من العبارات التالية تعبر بدقة عن \"مبدأ التداخل في النمو\"؟",
+        "options": [
+            "النمو يسير بسرعة ثابتة في كافة المراحل العمرية",
+            "جوانب النمو (الجسمية، العقلية، الانفعالية) مترابطة ومتداخلة ولا يمكن عزل جانب عن آخر",
+            "النمو عملية تراكمية بحتة لا تتأثر بالبيئة",
+            "النمو يتوقف تماماً بعد مرحلة المراهقة المبكرة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 20,
+        "q": "وصف النمو بأنه \"عملية مستمرة ومتتابعة وديناميكية\" يعني أن:",
+        "options": [
+            "مراحل النمو تنفصل بحدود فاصلة وصارمة",
+            "كل مرحلة تتلو مراحلاً سبقتها وتؤثر فيمن يأتي بعدها",
+            "سرعة النمو تظل ثابتة ومطردة طوال الحياة",
+            "التوقف عن تقديم الأنشطة لا تأثير له على النمو"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 21,
+        "q": "وصف النمو بأنه \"عملية تراكمية\" يشير إلى أن:",
+        "options": [
+            "المرحلة اللاحقة تضيف نماءً إلى المراحل التي سبقتها",
+            "النمو البدني يلغي تماماً الآثار العقلية السابقة",
+            "مراحل الطفولة المتأخرة تنفصل كلياً عن الرضاعة",
+            "التطور يحدث بطفرات مفاجئة بلا تراكم"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 22,
+        "q": "تتميز صفة \"سرعة النمو في مراحل مختلفة متفاوتة\" بأن:",
+        "options": [
+            "أسرع مراحل النمو هي ما بعد البلوغ مباشرة",
+            "مرحلة ما قبل الميلاد هي أسرع مراحل النمو، ثم تبطئ نسبياً في الرضاعة والطفولة المبكرة",
+            "الطفولة المتأخرة تشهد أسرع نمو في تاريخ الفرد",
+            "الشيخوخة تمتاز بسرعة التغيرات الإيجابية"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 23,
+        "q": "مظاهر النمو المتعددة تسير بسرعة مختلفة، وهذا يعني:",
+        "options": [
+            "أن معدل النمو الجسمي يتطابق تماماً مع معدل النمو العقلي",
+            "أن سرعة النمو الجسمي تختلف عن سرعة النمو العقلي والانفعالي والاجتماعي",
+            "أن النمو الانفعالي يتوقف قبل النمو الجسمي بمدة طويلة",
+            "أن المظاهر كافة تتوقف في سن المراهقة المبكرة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 24,
+        "q": "وفقاً لأهداف علم النفس، فإن \"التنبؤ\" باتجاه النمو والسلوك يعتمد على:",
+        "options": [
+            "العشوائية المطلقة في سلوك الكائنات الحية",
+            "كون النمو يسير في نظام وتتابع، مما يتيح التنبؤ بالخطوط العريضة",
+            "ثبات العوامل البيئية بمعزل عن الوراثة تماماً",
+            "انعدام أي فروق فردية بين الأفراد في مسارات النمو"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 25,
+        "q": "تبدأ بداية \"النمو المحدود في مكانه وزمانه المحددين\" عند:",
+        "options": [
+            "مرحلة الطفولة المتأخرة بالملعب المدرسي",
+            "التقاء الحيوان المنوي بالبويضة واستقرارها برحم الأم، وتكون نهايتها عند اكتمال النضج",
+            "الولادة المبتكرة للطفل",
+            "سن الرشد وتولي الوظيفة المهنية"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 26,
+        "q": "وفقاً لنظرية النمو المعرفي لجيروم برونر، فإن النشاط الذي يستخدم فيه الفرد الصور العقلية لما حوله يُعرف بـ:",
+        "options": [
+            "النشاط العملي أو الحركي",
+            "النشاط التخيلي",
+            "النشاط الرمزي",
+            "النشاط التوليدي الانعكاسي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 27,
+        "q": "في نظرية جيروم برونر، أي أنواع التمثيل المعرفي يعتمد على الكلمات واستخدام التمثيلَات الرمزية واللغة لتشكل المفهوم؟",
+        "options": [
+            "النشاط الحركي",
+            "النشاط التخيلي",
+            "النشاط الرمزي",
+            "النشاط التجريبي"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 28,
+        "q": "صاحب نظرية النحو التوليدي في النمو اللغوي الذي يرى أن الأطفال يولدون بملكة فطرية لاكتساب اللغة هو:",
+        "options": [
+            "جان بياجيه",
+            "ليف فيغوتسكي",
+            "نعوم تشومسكي",
+            "جيروم برونر"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 29,
+        "q": "في مراحل نمو اللغة عند تشومسكي، المرحلة التي يبدأ فيها الطفل بنطق كلمات ذات مقاطع صغيرة في عمر السنة تسمى:",
+        "options": [
+            "مرحلة اللغة الفطرية",
+            "مرحلة الكلمة الواحدة",
+            "مرحلة الكلمتين",
+            "مرحلة القدرة على التحويل"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 30,
+        "q": "المرحلة العمرية التي ينطق فيها الطفل كلمتين أو أكثر قليلاً (في عمر سنتين) وفقاً لتشومسكي تُعرف بـ:",
+        "options": [
+            "مرحلة الكلمة الواحدة",
+            "مرحلة الكلمتين",
+            "اكتساب القواعد اللغوية",
+            "تكوين القواعد المعقدة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 31,
+        "q": "في أي مرحلة من مراحل نمو اللغة عند تشومسكي يحدث بين سن الثانية والثالثة اكتساب القواعد اللغوية؟",
+        "options": [
+            "المرحلة الأولى (مرحلة الصرخة الأولى)",
+            "المرحلة الثالثة",
+            "المرحلة الرابعة",
+            "المرحلة السادسة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 32,
+        "q": "القدرة على التحويل في نمو اللغة عند تشومسكي تحدث في سن:",
+        "options": [
+            "سنة واحدة",
+            "سنتين",
+            "بين الثالثة والسادس (بين الثالثة والسادسة / أو ما بين سن الثانية والثالثة)",
+            "ابتداءً من السنة السادسة"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 33,
+        "q": "يقترب النطق لدى الطفل من النطق كالكبار ابتداءً من السنة السادسة، وهي المرحلة المسمى عند تشومسكي بـ:",
+        "options": [
+            "مرحلة الكلمة الواحدة",
+            "مرحلة الكلمتين",
+            "تكوين القواعد المعقدة",
+            "مرحلة الصرخة والولادة"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 34,
+        "q": "يُعرف مفهوم \"الفروق الفردية\" إجرائياً بأنه:",
+        "options": [
+            "التشابه التام بين أعضاء الجماعة الواحدة",
+            "الانحراف عن متوسط الجماعة في الصفات المختلفة الجسمية والعقلية والانفعالية والاجتماعية",
+            "الثبات المطلق في القدرات المعقلية طوال الحياة",
+            "التغير العشوائي المستمر في السلوك الخارجي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 35,
+        "q": "الفروق الفردية الناتجة عن العوامل الوراثية وتداخلها مع البيئة والظروف الاجتماعية المحيطة تُصنف على أنها فروق:",
+        "options": [
+            "طبيعية",
+            "مشتركة",
+            "مكتسبة",
+            "تربوية بحتة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 36,
+        "q": "الفروق الفردية التي تنتج كنتيجة لعوامل التعلم التي يكتسبها الفرد تُصنف كفروق:",
+        "options": [
+            "طبيعية",
+            "مشتركة",
+            "مكتسبة",
+            "وراثية خالصة"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 37,
+        "q": "أي من الخصائص الآتية تعني أنه \"لا يوجد شخصان يتشابهان في استجابة كل منهما لموقف واحد\"؟",
+        "options": [
+            "قابلية الفروق الفردية للقياس",
+            "عمومية الفروق الفردية",
+            "مدى الفروق الفردية",
+            "ثبات الفروق الفردية"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 38,
+        "q": "هـ) فروق في الدرجة وليس في النوع   استخدام اختبارات الذكاء المقننة لقياس درجة ذكاء المفحوص يعكس خصيصَة الفروق الفردية المتمثلة في:",
+        "options": [
+            "عمومية الفروق",
+            "قابلية الفروق الفردية للقياس",
+            "مدى الفروق الفردية",
+            "ثبات الفروق"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 39,
+        "q": "الفرق بين أعلى درجة وأقل درجة لوجود أي صفة من الصفات المختلفة يُعرف بـ:",
+        "options": [
+            "عمومية الفروق",
+            "ثبات الفروق",
+            "مدى الفروق الفردية",
+            "قابلية القياس"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 40,
+        "q": "ثبات الفروق العقلية المعرفية يظهر بوضوح وخاصة بعد:",
+        "options": [
+            "مرحلة الرضاعة المبكرة",
+            "مرحلة المراهقة المبكرة",
+            "مرحلة الطفولة المتأخرة حصراً",
+            "نهاية مرحلة النضج والشيخوخة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 41,
+        "q": "الفروق بين الأفراد هي في جوهرها:",
+        "options": [
+            "فروق في النوع وليست في الدرجة",
+            "فروق في الدرجة وليس في النوع",
+            "فروق وهمية غير قابلة للإثبات العلمي",
+            "فروق مطلقة وثابتة منذ الولادة ولا تتأثر بالتعلم"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 42,
+        "q": "أهمية اكتشاف الفروق الفردية من حيث \"التنشئة والتربية\" تكمن في:",
+        "options": [
+            "وضع الفرد المناسب في العمل المناسب",
+            "رعاية الصحة النفسية والتربية السليمة",
+            "فهم الآخرين وإلقاء الضوء على تصرفاتهم",
+            "تفهم الفرد لنفسه ومعرفة إمكاناته"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 43,
+        "q": "مساعدة الفرد على تفهم نفسه واستغلال مواهبه ومعرفة إمكاناته تعتبر من أهمية اكتشاف الفروق الفردية من الناحية:",
+        "options": [
+            "الخلقية",
+            "الذاتية",
+            "المهنية والوظيفية",
+            "التنشئة والتربية"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 44,
+        "q": "أي من العوامل الآتية يعتبر من العوامل المؤثرة في الفروق الفردية الناتجة عن انتقال الصفات الأساسية من الآباء إلى الأبناء؟",
+        "options": [
+            "البيئة الاجتماعية",
+            "الوراثة والاستعداد الفطري",
+            "العمر الزمني",
+            "المستوى العقلي المعرفي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 45,
+        "q": "كلما ازدادت العمليات العقلية تعقيداً وصعوبة، ازدادت تبعاً لذلك:",
+        "options": [
+            "الفروق العقلية القائمة بين الأفراد وتباين سلوكهم طبقاً لتباينهم في العمليات العليا",
+            "درجات التشابه المطلق بين الأفراد",
+            "استقرار مستويات الجنسين بالتساوي التام",
+            "فاعلية البيئة الاجتماعية بمعزل عن الاستعداد الوراثي"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 46,
+        "q": "إعداد المناهج بما يتناسب مع قدرات واستعدادات الطلاب المتباينة يمثل تطبيقاً عملياً لـ:",
+        "options": [
+            "أهداف علم النفس النظري",
+            "أهمية معرفة الفروق الفردية في المجال التعليمي",
+            "مبدأ التداخل في النمو",
+            "مناهج البحث التجريبي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 47,
+        "q": "إدراج العديد من الأنشطة والبرامج الإضافية مثل رعاية الموهوبين والمسابقات العلمية والتقوية يلبي احتياجات:",
+        "options": [
+            "الطلبة المتجانسين تماماً في القدرات",
+            "الطلبة ذوي الفروق والفئات المختلفة (الطلبة الطلبة المختلفين)",
+            "المعلمين في قيادة العملية التعليمية",
+            "المنهج التجريبي الصارم"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 48,
+        "q": "المفهوم الخاطئ الشائع لدى بعض المعلمين والذي تنقده أدبيات مراعاة الفروق الفردية هو:",
+        "options": [
+            "التعامل مع الطلاب على أنهم متساوون في النواحي الجسمية والعقلية والحفظ والفهم والعدل هو المساواة المطلقة بالمعاملة المتطابقة",
+            "استخدام أساليب تدريس تراعي ميول الطلاب",
+            "توفير أنشطة إضافية للموهوبين",
+            "تقبل الفروق الفردية كأمر طبيعي"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 49,
+        "q": "المعلم الكفء الذي يراعي الفروق الفردية في التعليم يعتمد على:",
+        "options": [
+            "طريقة تدريس واحدة موحدة لجميع المستويات",
+            "استخدام طرق تدريس تراعي تلك الفروق وتتکیف مع البيئة المدرسية وتناسب قدرات الطلاب",
+            "إلغاء الأنشطة الثقافية والاكتفاء بالحفظ",
+            "افتراض أن جميع الطلاب يحتاجون لنفس مستوى الأسئلة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 50,
+        "q": "وفقاً لقانون أو مبدأ \"يخضع النمو لمبدأ الفروق الفردية\"، فإن:",
+        "options": [
+            "كل فرد ينمو وفقاً لمعايير ودرجة خاصة به في الذكاء والحركة والانفعال",
+            "جميع الأطفال ينموون بنفس السرعة وبدون أي تباين",
+            "الأذكياء فقط هم من يخضعون للفروق الفردية",
+            "المهام التعليمية يجب أن تكون متطابقة في درجة الصعوبة لجميع المستويات"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 51,
+        "q": "عند تكليف الطلاب بمهام تعليمية، فإن الطلبة الأذكياء يحتاجون إلى:",
+        "options": [
+            "أسئلة أقل صعوبة وأقل تعقيداً",
+            "أسئلة ونشاطات ذات مستوى عالٍ أما الطلبة الأقل ذكاءً فيحتاجون لأسئلة أقل صعوبة",
+            "مهام عشوائية لا علاقة لها بمستواهم",
+            "إلغاء الأنشطة الحركية والانفعالية تماماً"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 52,
+        "q": "مبدأ \"التعقيد والتداخل\" في جوانب النمو يعني أن:",
+        "options": [
+            "جانب النمو الانفعالي منفصل تماماً عن النمو الجسمي",
+            "جوانب النمو (الجسمية، الاجتماعية، العقلية، الانفعالية، الحركية) مترابطة ومتداخلة ولا يمكن عزل جانب عن آخر",
+            "نمو الطفل العقلي يحدث بمعزل عن البيئة الخارجية",
+            "الأخصائي يجب أن يركز على جانب واحد فقط لتنمية الفرد"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 53,
+        "q": "لكي ينمو الفرد بتوازن وتكامل، يجب على المعلم أو الأخصائي:",
+        "options": [
+            "استهداف جوانب النمو كافة",
+            "التركيز على الجانب العقلي فقط وإهمال البقية",
+            "فصل النمو الحركي عن النمو الاجتماعي تماماً",
+            "الاكتفاء بتنمية الجانب الجسمي في مرحلة المراهقة"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 54,
+        "q": "وصف النمو بأنه \"عملية مستمرة ومتتابعة وديناميكية\" يعني أن:",
+        "options": [
+            "التفاعل والاستمرار لا يتوقفان، وكل مرحلة تتلو مراحلاً سابقة وتتأثر بها وتؤثر فيما يليها",
+            "الأخصائي يمكنه التوقف عن تقديم الأنشطة التعليمية متى شاء دون أثر",
+            "سرعة النمو تظل ثابتة لا تتغير في أي مرحلة",
+            "مراحل النمو تحدث بقفزات مفاجئة بلا ترابط"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 55,
+        "q": "النمو كعملية تراكمية يعني أن:",
+        "options": [
+            "المرحلة اللاحقة تضيف نماءً إلى المراحل التي سبقتها",
+            "كل مرحلة جديدة تمحو آثار المرحلة السابقة تماماً",
+            "حصيلة النمو الكلي لا علاقة لها بالمراحل المبكرة",
+            "التراكم يقتصر على الجانب المعرفي البحت"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 56,
+        "q": "النمو كعملية كية تكاملية يعني أن:",
+        "options": [
+            "الإنسان ينمو بجانب واحد أو أكثر دون نمو البقية",
+            "جوانب النمو تكمل بعضها بعضاً ليطوّر الفرد بشكل متكامل، والنمو ليس مجرد إضافات بل إضافات تكمل بعضها",
+            "الأنشطة الصفية يجب أن تقتصر على المناهج الأكاديمية الصرفة",
+            "نمو العضو الواحد مستقل تماماً عن باقي أجهزة الجسم"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 57,
+        "q": "في خصائص ومراحل النمو، يقال إن \"النمو يسير في مراحل\" والمقصود بذلك أن:",
+        "options": [
+            "حياة الفرد تتكون من وعاء واحد لا ثغرات فيه",
+            "لكل مرحلة خصائص واضحة ومميزة، رغم تداخلها وصعوبة التمييز القاطع بين نهايتها وبداية ما يليها",
+            "المراحل تفصل بينها انقطاعات تامة في النمو الحركي",
+            "لعب الرضيع يتطابق تماماً مع لعب الطفل في المدرسة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 58,
+        "q": "من مظاهر اختلاف سرعة النمو في مرحلة ما قبل الميلاد وما بعدها:",
+        "options": [
+            "مرحلة ما قبل الميلاد هي أسرع مراحل النمو ومعدل النمو فيها سريع جداً، ثم تبطئ نسبياً بعد الميلاد في الرضاعة والطفولة المبكرة",
+            "مرحلة الشيخوخة تشهد أسرع نمو إيجابي",
+            "مرحلة الطفولة المتأخرة أسرع من مرحلة الجنين",
+            "السرعة تظل ثابتة ومطردة طوال الحياة"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 59,
+        "q": "متى تحدث \"تغيرات سريعة قوية\" في سرعة النمو لدرجة تسمى أحياناً بالولادة الثانية؟",
+        "options": [
+            "مرحلة الطفولة المبكرة",
+            "مرحلة المراهقة",
+            "مرحلة الرضاعة المتأخرة",
+            "مرحلة الشيخوخة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 60,
+        "q": "عند نهاية مرحلة المراهقة وبداية مرحلة النضج، فإن سرعة النمو:",
+        "options": [
+            "تبلغ أقصى تسارع لها في التاريخ البشري",
+            "تهدأ تماماً لتستقر تماماً في نهاية المراهقة وبداية النضج، ثم يسير النمو هكذا إلى أن تأتي مرحلة الشيخوخة فيبدأ التدهور",
+            "تنعكس باتجاه عكسي نحو الطفولة",
+            "تتوقف بشكل كامل ودائم فجأة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 61,
+        "q": "أي من العبارات الآتية تصف بدقة العلاقة بين مظاهر النمو المختلفة في السرعة؟",
+        "options": [
+            "جميع مظاهر النمو تسير بنفس السرعة المتطابقة تماماً",
+            "لا تسير جوانب النمو المختلفة بالسرعة نفسها؛ فمعدل النمو الجسمي يختلف عن العقلي والانفعالي والاجتماعي",
+            "النمو العقلي يسبق دائماً النمو الانفعالي بسنوات ثابتة",
+            "النمو الاجتماعي يتوقف قبل النمو الجسمي بمدة طويلة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 62,
+        "q": "العامل الأساسي الذي يحدد \"نقطة الانطلاق\" لمظاهر النمو الجسمي والعقلي والانفعالي والاجتماعي هو:",
+        "options": [
+            "الأساس الوراثي للفرد",
+            "الظروف الخارجية والترفيهية للمدرسة",
+            "أساليب التعليم والثقافة العامة",
+            "كمية الأشعة فوق البنفسجية المتعرض لها"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 63,
+        "q": "من أمثلة تأثير الظروف الخارجية على النمو:",
+        "options": [
+            "نقص إفراز الغدة الدرقية يؤدي للضعف العقلي، والظروف الخارجية تؤثر في النمو والتغذية والنشاط المتاح للطفل",
+            "الأساس الوراثي يحدد كل تفصيلة بيئية بدقة مطلقة",
+            "المناخ لا علاقة له بالنمو البدني نهائياً",
+            "الأمراض الوراثية لا تتأثر أبداً بالرعاية الطبية"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 64,
+        "q": "واحدة من الآتية تعتبر من أهم أهداف علم النفس بصفة عامة فيما يتعلق بالسلوك:",
+        "options": [
+            "إمكانية التنبؤ بالسلوك وإمكانية ضبطه والتحكم فيه",
+            "إلغاء الفروق الفردية بين المتعلمين تماماً",
+            "توحيد سرعة النمو لدى جميع الكائنات الحية",
+            "الاعتماد حصراً على المنهج الإكلينيكي في كل الظواهر"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 65,
+        "q": "النقطة التي يبدأ فيها النمو المحدود في مكانه وزمانه هي:",
+        "options": [
+            "الولادة الباكرة للطفل في المستشفى",
+            "التقاء الحيوان المنوي بالبويضة واستقرار هذه البويضة برحم الأم، والنهاية عند اكتمال النضج",
+            "دخول الطفل للمدرسة الابتدائية",
+            "مرحلة المراهقة المتأخرة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 66,
+        "q": "وفقاً لبرونر، إذا فكر الطفل باستخدام الصور العقلية لما حوله، فهو في مرحلة:",
+        "options": [
+            "النشاط العملي أو الحركي",
+            "النشاط التخيلي",
+            "النشاط الرمزي",
+            "النشاط اللغوي المعقد"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 67,
+        "q": "يُعرف استخدام الطفل للكلمات والتمثيلات الرمزية لتشكل المفهوم حتى قبل الالتحاق بالدرسة بـ:",
+        "options": [
+            "النشاط الحركي لبرونر",
+            "النشاط التخيلي لبرونر",
+            "النشاط الرمزي لبرونر",
+            "نظرية النحو التوليدي لتشومسكي"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 68,
+        "q": "العالم الذي يُعد صاحب نظرية النحو التوليدي واستاذ في معهد ماساتشوستس للتقنية هو:",
+        "options": [
+            "جيروم برونر",
+            "نعوم تشومسكي",
+            "جان بياجيه",
+            "فيغوتسكي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 69,
+        "q": "الطفل الذي يبدأ في نطق كلمات ذات مقاطع صغيرة في عمر السنة، يمر بمرحلة نمو لغوي عند تشومسكي تُسمى:",
+        "options": [
+            "مرحلة الكلمة الواحدة",
+            "مرحلة الكلمتين",
+            "اكتساب القواعد اللغوية",
+            "تكوين القواعد المعقدة"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 70,
+        "q": "في أي مرحلة عمرية ينطق الطفل جملًا مطولة وفق مراحل تشومسكي اللغوية؟",
+        "options": [
+            "عمر السنة (مرحلة الكلمة الواحدة)",
+            "عمر سنتين (مرحلة الكلمتين)",
+            "بين الثانية والثالثة (اكتساب القواعد اللغوية)",
+            "بين الثالثة والسادسة (القدرة على التحويل وينطق جملًا مطولة)"
+        ],
+        "correct": 3
+    },
+    {
+        "num": 71,
+        "q": "التعريف الإجرائي \"الانحراف عن متوسط الجماعة في الصفات المختلفة الجسمية والعقلية والانفعالية والاجتماعية\" يشير إلى:",
+        "options": [
+            "النمو العام",
+            "الفروق الفردية",
+            "النضج العضوي",
+            "الذكاء العام المقنن"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 72,
+        "q": "تُصنف الفروق الناتجة عن عوامل وراثية وتداخلها مع البيئة والظروف المحيطة كفروق:",
+        "options": [
+            "طبيعية",
+            "مشتركة",
+            "مكتسبة",
+            "تربوية بحتة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 73,
+        "q": "واحدة من الآتية تُعد من خصائص الفروق الفردية:",
+        "options": [
+            "أن هناك شخصين يتشابهان تماماً في كل استجابة",
+            "أنها غير قابلة للقياس الكمي بأي وسيلة",
+            "عمومية الفروق الفردية وثبات الفروق المعقلية خاصة بعد المراهقة المبكرة",
+            "أنها فروق في النوع وليست في الدرجة"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 74,
+        "q": "أهمية اكتشاف الفروق الفردية في \"الإعداد المهني والوظيفي\" تتمثل في:",
+        "options": [
+            "رعاية الصحة النفسية والتربية السليمة",
+            "وضع الفرد المناسب في العمل المناسب",
+            "فهم الآخرين وإلقاء الضوء على تصرفاتهم",
+            "مساعدة الفرد على تفهم نفسه"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 75,
+        "q": "من العوامل المؤثرة في الفروق الفردية، عامل \"العمر الزمني\" والذي يقصد به:",
+        "options": [
+            "الفروق الزمنية في أعمار الناس من شأنها أن تشكل فروقاً في المعرفة والخبرات",
+            "تساوي الخبرات المعرفية بين جميع الفئات العمرية",
+            "توقف الفروق الفردية بعد سن الرشد",
+            "تأثير الوراثة وحدها بمعزل عن العمر"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 76,
+        "q": "أثناء مرحلة المراهقة، كيف يتسق نمو الجنسين في النواحي العقلية؟",
+        "options": [
+            "يزداد النمو العقلـي عند الإناث أعلى منه عند الذكور حتى سن المراهقة، بينما الذكور يزداد النمو لديهم أكثر من الإناث في سن المراهقة وبعد ذلك تتقارب المستويات",
+            "يتطابق نمو الجنسين تماماً في كافة اللحظات العمرية",
+            "الإناث تفوق الذكور دائماً في كل مراحل العمر بلا تقارب",
+            "الذكور يتفوقون على الإناث منذ الولادة وحتى الشيخوخة في النمو اللغوي والرياضي"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 77,
+        "q": "الدراسة العلمية لسلوك الكائنات الحية، وخصوصاً الإنسان، بهدف التوصل إلى فهم هذا السلوك وتفسيره والتنبؤ به والتحكم فيه تُعرف بـ:",
+        "options": [
+            "علم النفس العام",
+            "علم النفس النمو",
+            "علم النفس الاجتماعي",
+            "علم النفس التربوي"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 78,
+        "q": "الفرع الذي يدرس التغيرات في سلوك الإنسان منذ لحظة تكوينه حتى الوفاة هو:",
+        "options": [
+            "علم النفس العام",
+            "علم النفس النمو",
+            "علم النفس التربوي",
+            "علم النفس الإكلينيكي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 79,
+        "q": "الفرع الذي يهتم بالدراسات النظرية والإجراءات التطبيقية لمبادئ علم النفس في مجال الدراسة وتربية النشء هو:",
+        "options": [
+            "علم النفس الاجتماعي",
+            "علم النفس التربوي",
+            "علم النفس العام",
+            "علم النفس العيادي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 80,
+        "q": "المنهج الذي يتم فيه اختبار الفرضية علمياً حيث يتم التجربة بالتلاعب بالمتجر المستقل وقياس المتغير التابع هو:",
+        "options": [
+            "المنهج التجريبي",
+            "المنهج الوصفي",
+            "المنهج التاريخي",
+            "المنهج الإكلينيكي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 81,
+        "q": "في الخطوات الأربع الأساسية للعملية التجريبية، ما هي الخطوة الأولى؟",
+        "options": [
+            "تصميم وجمع البيانات",
+            "تحليل البيانات والاستنتاج",
+            "تشكيل الفرضية",
+            "تعميم النتائج"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 82,
+        "q": "في الخطوات الأربع الأساسية للعملية التجريبية، الخطوة الرابعة والأخيرة هي:",
+        "options": [
+            "تشكيل الفرضية",
+            "تصميم وجمع البيانات",
+            "تحليل البيانات والاستنتاج",
+            "تعميم النتائج"
+        ],
+        "correct": 3
+    },
+    {
+        "num": 83,
+        "q": "أي من مناهج البحث الآتية يشمل (الدراسات المسحية، الدراسات الارتباطية، والدراسات الطولية والمستعرضة)؟",
+        "options": [
+            "المنهج التجريبي",
+            "المنهج الوصفي",
+            "المنهج التاريخي",
+            "المنهج الإكلينيكي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 84,
+        "q": "دراسة العلاقات الارتباطية بين المشكلات، مثل العلاقة بين التأخر الدراسي والمشكلات الأسرية، تقع ضمن:",
+        "options": [
+            "الدراسات المسحية",
+            "الدراسات الارتباطية (في المنهج الوصفي)",
+            "الدراسات التجريبية الضابطة",
+            "المنهج الإكلينيكي التشخيصي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 85,
+        "q": "دراسة عميقة للحياة الحقيقية أو نموذج معين لموقف معين، مثل دراسة حالة طالب متعثر دراسياً، تُعرف بـ:",
+        "options": [
+            "الدراسات المسحية",
+            "دراسة الحالة (ضمن المنهج الوصفي)",
+            "الدراسات الارتباطية",
+            "المنهج التجريبي"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 86,
+        "q": "مقارنة سلوك أو سمات أطفال بمجموعة أخرى من الأطفال كالطول والوزن والتحصيل الأكاديمي بين فئات عمرية مختلفة أو دراسية أخرى أكبر أو أصغر، يمثل:",
+        "options": [
+            "المنهج التاريخي (في سياق مقارنة الخصائص العمرية ومطالبها)",
+            "المنهج التجريبي البحت",
+            "المنهج الإكلينيكي البحت",
+            "الدراسات المسحية الضابطة"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 87,
+        "q": "مرور الإنسان بمراحل مختلفة أثناء نموه، ولكل مرحلة من تلك المراحل مطالبها واحتياجاتها، يؤدي تحقيق هذه المطالب إلى الصحة النفسية، بينما عدم تلبيتها يؤدي إلى:",
+        "options": [
+            "استقرار تام في النمو العقلي",
+            "مشكلات نفسية ومشكلات في التعلم كذلك",
+            "تفوق مبكر في القدرات الحركية",
+            "التخلص الفوري من الفروق الفردية"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 88,
+        "q": "العامل الذي يعد كعامل \"ذو تأثير مباشر على التكوين التشريحي والوظائف الفسيولوجية\" من عوامل النمو هو:",
+        "options": [
+            "البيئة الخارجية",
+            "الوراثة (Heredity)",
+            "الطقس والمناخ",
+            "الحالة الصحية العامة للأم"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 89,
+        "q": "تحتوي الغدد في الجسم على مجموعتين، إحداهما لا صماء وتفرز هرموناتها خارج الجسم مثل اللعابية والدمعية، والأخرى صماء تفرز هرموناتها في الدم مباشرة وتسمى:",
+        "options": [
+            "الغدد الهضمية الطولية",
+            "الغدد الصماء التي تؤثر بشكل مباشر وكبير في جوانب السلوك البشري",
+            "الغدد العرقية المرتبطة بالطقس",
+            "الغدد الحركية للأطراف"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 90,
+        "q": "عامل الجنس أو النوع يلعب دوراً هاما في النمو الجسمي والانفعالي والعقلي للطفل، فعند الميلاد يزيد حجم الأولاد عن البنات، ولكن:",
+        "options": [
+            "الأولاد ينمون بسرعة أكبر من البنات طوال الحياة",
+            "البنات ينمون بسرعة أكبر ويصلن إلى سن المراهقة قبل الأولاد بعامين تقريباً",
+            "لا توجد أي فروق في سرعة النمو بين الجنسين قبل المراهقة",
+            "الإناث يتفوقن دائماً في القدرات الميكانيكية والرياضية"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 91,
+        "q": "بالنسبة للقدرات الميكانيكية والرياضية في عامل الجنس، فإن:",
+        "options": [
+            "البنات يتفوقن لالتصاقهن بالأسرة بشكل أكبر",
+            "الأولاد يتفوقون في القدرات الميكانيكية والرياضية",
+            "الجنسان متطابقان تماماً في كل القدرات الرياضية",
+            "الإناث يتفوقن في كافة العمليات العقلية العليا بلا استثناء"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 92,
+        "q": "يقصد بالبيئة (Environment) كعامل مؤثراً في النمو:",
+        "options": [
+            "كل العوامل الخارجية التي تؤثر في الفرد تأثيراً مباشراً أو غير مباشر منذ الإخصاب وحتى الممات (بيئة داخلية رحمية وبيئة خارجية خارج الرحم)",
+            "العوامل الوراثية فقط بمعزل عن الرحم",
+            "الطقس والأشعة فوق البنفسجية فقط",
+            "المدرسة ومناهجها الأكاديمية فقط"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 93,
+        "q": "أي من الأمراض الآتية إذا تعرضت لها الأم الحامل قد تؤثر على النمو العقلي للطفل، مثل الزهري والحصبة الألمانية والولادة المتعسرة؟",
+        "options": [
+            "الأمراض الوراثية البحتة التي لا علاقة لها بالأم",
+            "مجموعة الأمراض التي تتعرض لها الأم الحامل وتؤثر على النمو العقلي للطفل",
+            "الهيموفيليا ومرض السل حصراً",
+            "أمراض الطفولة المتأخرة"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 94,
+        "q": "المريض بمرض مثل السل أو الهيموفيليا يعيش قلقا مضطربا خائفا على حياته فتضيق دائرة معارفه ويتأخر نضجه، وهذا مثال على تأثير:",
+        "options": [
+            "المرض والحوادث كعوامل ثانوية في العوامل العضوية للنمو",
+            "البيئة الرحمية الداخلية وحدها",
+            "الغدد الصماء المباشرة",
+            "المنهج التجريبي في علم النفس"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 95,
+        "q": "وفقاً لعوامل الطقس والمناخ، معدل نمو أطفال الريف أسرع من أطفال المدن المزدحمة بالسكان بسبب:",
+        "options": [
+            "درجة نقاء الهواء الذي يتنفسه الطفل، والأشعة الشمسية وأثرها الفعال في سرعة النمو وخاصة الأشعة فوق البنفسجية",
+            "كثرة المصانع والملوثات في الريف",
+            "تباين السلالات البشرية حصراً",
+            "غياب المناهج المدرسية بالريف"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 96,
+        "q": "تختلف سرعة النمو تبعاً لاختلاف نوع سلالة الطفل؛ فنمو الطفل الأردني يختلف إلى حد ما عن نمو الطفل الصيني، وهذا يرتبط بعامل:",
+        "options": [
+            "السلالة (اختلاف السلالة الإنسانية التي ينتمي إليها الطفل)",
+            "الغدد الصماء المباشرة",
+            "الولادة المبتكرة",
+            "المنهج الإكلينيكي التشخيصي"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 97,
+        "q": "وفقاً لخصائص النمو، فإن العبارة التي تعبر عن أن \"النمو يسير من العام إلى الخاص\" تعني:",
+        "options": [
+            "أن الطفل يبدأ السلوك كلياً ثم تظهر التفاصيل بعد ذلك (فالطفل يمسك الأشياء بيده كلها ثم يمسك بإصبعين أو ثلاثة)",
+            "أن الطفل يبدأ بتحريك الأصابع الدقيقة قبل الذراعين تماماً",
+            "أن النمو يتوقف في مرحلة المراهقة بشكل مفاجئ",
+            "أن الفروق الفردية تنعدم في مرحلة الطفولة المبكرة"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 98,
+        "q": "مبدأ \"يخضع النمو لمبدأ الفروق الفردية\" يعني أن:",
+        "options": [
+            "كل فرد ينمو وفقاً لمعايير ودرجة خاصة به سواء أكان في الذكاء أو السلوك الحركي أو الانفعالي",
+            "جميع الطلاب يسيرون بوتيرة متطابقة في نفس اللحظة الزمنية",
+            "المهام التعليمية يجب أن تكون ذات مستوى صعوبة موحد وغير متنوع",
+            "الذكاء العالي يتطلب أسئلة أقل صعوبة"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 99,
+        "q": "النمو عملية مستمرة ومتابعة وديناميكية يعني أن:",
+        "options": [
+            "الاستمرار والتفاعل هما أساس النمو المستمر في المراحل المتنوعة للعمر، وكل مرحلة تتلو مراحلاً تسبقها",
+            "الأخصائي يمكنه إيقاف النشاط التعليمي متى شاء",
+            "سرعة النمو لا تتغير بين مرحلة الطفولة والشيخوخة",
+            "التراكم يحدث بمعزل عن التفاعل البيئي"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 100,
+        "q": "أي من المبادئ التالية ينص على أن النمو عملية تكاملية؟",
+        "options": [
+            "أنه لا تنمو جانب من جوانب النمو في الإنسان ويبقى جانب أو أكثر بدون نمو، والنمو ليس مجرد إضافات بل إضافات تكلل بعضها بعضاً لينمو الفرد بشكل متكامل",
+            "أن النمو يتأثر بالوراثة وحدها بمعزل عن البيئة",
+            "أن سرعة النمو متطابقة في كافة المظاهر العقلية والجسمية",
+            "أن المراحل العمرية تنفصل عن بعضها بحدود صارمة لا تداخل فيها"
+        ],
+        "correct": 0
+    }
+];
+
+        // خلط Fisher–Yates يغير مواقع الاختيارات في كل محاولة، مع حفظ الإجابة الصحيحة.
+        const originalQuizData = quizData.map(question => ({
+            ...question, options: [...question.options]
+        }));
+        function shuffledQuestion(question) {
+            const choices = question.options.map((text, index) => ({ text, isCorrect: index === question.correct }));
+            for (let i = choices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [choices[i], choices[j]] = [choices[j], choices[i]];
+            }
+            return {
+                ...question,
+                options: choices.map(choice => choice.text),
+                correct: choices.findIndex(choice => choice.isCorrect)
+            };
+        }
+        function prepareAttempt() {
+            originalQuizData.forEach((question, index) => {
+                quizData[index] = shuffledQuestion(question);
+            });
+        }
+        prepareAttempt();
+        const letters = ["أ", "ب", "ج", "د"];
+        let currentQIndex = 0;
+        let score = 0;
+        const answersState = {}; // لتخزين حالة إجابات المستخدم
+        let professionalView = false;
+        const encourageBefore = [
+            '💡 شجّع طلابك على المحاولة: اختر الإجابة التي تراها صحيحة، ثم تحقّق من الحل.',
+            '🌟 لا تتعجل — اقرأ الخيارات كلها ثم اختر بثقة.',
+            '🎯 فرصة رائعة للتدريب: حاول أولاً ثم راجع الإجابة الصحيحة.',
+            '🚀 أنت قادر على الحل، فقط فكّر بهدوء وحدد الأنسب.'
+        ];
+        const encourageSuccess = [
+            'أحسنت جدًا! ✅ إجابة موفقة، استمر على هذا التميّز.',
+            'رائع يا بطل 👏 إجابتك صحيحة، واصل النجاح.',
+            'ممتاز 🌟 اختيار صحيح يدل على فهم جميل.',
+            'إجابة صحيحة 💚 استمر بنفس التركيز.'
+        ];
+        const encourageRetry = [
+            'محاولة جيدة 💛 راجع السؤال مرة أخرى وستصل للإجابة الصحيحة.',
+            'لا بأس 🌷 الخطأ خطوة نحو التعلّم، حاول من جديد.',
+            'استمر في المحاولة ✨ بالتفكير الهادئ ستنجح.',
+            'أنت قريب من الحل 🎯 اقرأ الخيارات مجددًا وتعلّم من التصحيح.'
+        ];
+        function randomPick(list){ return list[Math.floor(Math.random()*list.length)]; }
+        function updateEncouragement() {
+            const box = document.getElementById('student-encourage');
+            if (!box) return;
+            box.className = 'student-encourage';
+            if (!quizData.length || !answersState.hasOwnProperty(currentQIndex)) {
+                box.textContent = randomPick(encourageBefore);
+                return;
+            }
+            const item = quizData[currentQIndex];
+            const ok = answersState[currentQIndex] === item.correct;
+            box.textContent = ok ? randomPick(encourageSuccess) : randomPick(encourageRetry);
+            box.classList.add(ok ? 'success' : 'retry');
+        }
+        function toggleProfessionalView() {
+            professionalView = !professionalView;
+            const pro = document.getElementById('pro-student-screen');
+            const standard = document.getElementById('standard-card-body');
+            const btn = document.getElementById('btn-pro-mode');
+            if (pro) pro.style.display = professionalView ? 'block' : 'none';
+            if (standard) standard.style.display = professionalView ? 'none' : 'flex';
+            if (btn) {
+                btn.classList.toggle('active', professionalView);
+                btn.innerHTML = professionalView ? '📘 العرض العادي' : '✨ شاشة احترافية';
+            }
+            updateEncouragement();
+        }
+        function currentStudentText() {
+            const item = quizData[currentQIndex];
+            if (!item) return '#الرخصة-المهنية_عام';
+            const lines = [
+                '#الرخصة-المهنية_عام',
+                '📘 الرخصة المهنية عام | المعيار الأول',
+                'الالتزام بالقيم الإسلامية الوسطية، وأخلاقيات المهنة، وتعزيز الهوية الوطنية',
+                '',
+                `❓ السؤال ${item.num}: ${item.q}`,
+                ...item.options.map((choice, index) => `${letters[index]}) ${choice}`),
+                '',
+                '🧠 شجّع نفسك على الحل أولاً ثم راجع الإجابة.',
+                '✍️ إعداد: إبراهيم أبوزيد | معلم ومدرب وباحث',
+                '📢 قناة الرخصة المهنية عام:',
+                CHANNEL_URL,
+                '📞 واتساب / تواصل: ‎+966 55 783 1353‎'
+            ];
+            return lines.join('\n');
+        }
+        async function copyQuestionOnly() {
+            const feedback = document.getElementById('student-copy-feedback');
+            const message = currentStudentText();
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(message);
+                } else {
+                    const area = document.createElement('textarea');
+                    area.value = message;
+                    area.style.cssText = 'position:fixed;left:-9999px;top:0';
+                    document.body.appendChild(area);
+                    area.focus(); area.select();
+                    const success = document.execCommand('copy');
+                    area.remove();
+                    if (!success) throw new Error('copy failed');
+                }
+                feedback.textContent = '✓ تم نسخ السؤال والخيارات بنجاح.';
+            } catch (e) {
+                feedback.textContent = 'تعذر النسخ التلقائي من المتصفح.';
+            }
+        }
+        function shareStudentQuestion() {
+            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(currentStudentText()), '_blank', 'noopener,noreferrer');
+        }
+
+        function loadQuestion() {
+            if (quizData.length === 0) {
+                document.getElementById("q-badge").innerText = "قالب جاهز";
+                document.getElementById("q-text").innerText = "سيتم عرض الأسئلة الجديدة هنا بعد إضافتها.";
+                document.getElementById("question-count").innerText = "الأسئلة: 0";
+                document.getElementById("progress-bar").style.width = "0%";
+                document.getElementById("options-container").innerHTML = "";
+                const proOpt = document.getElementById('pro-options-container'); if (proOpt) proOpt.innerHTML = '';
+                const proQ = document.getElementById('pro-q-text'); if (proQ) proQ.innerText = "سيتم عرض الأسئلة الجديدة هنا بعد إضافتها.";
+                const proB = document.getElementById('pro-q-badge'); if (proB) proB.innerText = 'قالب جاهز';
+                document.getElementById("btn-prev").disabled = true;
+                document.getElementById("btn-next-top").disabled = true;
+                updateEncouragement();
+                return;
+            }
+            const currentData = quizData[currentQIndex];
+            document.getElementById("q-badge").innerText = `سؤال ${currentData.num}`;
+            document.getElementById("q-text").innerText = currentData.q;
+            document.getElementById("question-count").innerText = `السؤال ${currentQIndex + 1} من ${quizData.length}`;
+            document.getElementById("btn-next-top").innerText = currentQIndex === quizData.length - 1 ? "عرض النتيجة" : "التالي ⬅";
+            document.getElementById("progress-bar").style.width = `${((currentQIndex + 1) / quizData.length) * 100}%`;
+            document.getElementById("btn-prev").disabled = (currentQIndex === 0);
+            document.getElementById("btn-next-top").disabled = false;
+
+            const proBadge = document.getElementById('pro-q-badge');
+            const proText = document.getElementById('pro-q-text');
+            if (proBadge) proBadge.innerText = `سؤال ${currentData.num}`;
+            if (proText) proText.innerText = currentData.q;
+
+            const hasAnswered = answersState.hasOwnProperty(currentQIndex);
+            const userPick = answersState[currentQIndex];
+
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+            currentData.options.forEach((opt, index) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerHTML = `
+                    <span class="opt-letter">${letters[index]}</span>
+                    <span class="opt-text">${opt}</span>
+                `;
+                if (hasAnswered) {
+                    btn.setAttribute("disabled", "true");
+                    if (index === currentData.correct) btn.classList.add("correct");
+                    else if (index === userPick) btn.classList.add("wrong");
+                } else {
+                    btn.onclick = () => selectOption(index);
+                }
+                optionsContainer.appendChild(btn);
+            });
+
+            const proOptionsContainer = document.getElementById('pro-options-container');
+            if (proOptionsContainer) {
+                proOptionsContainer.innerHTML = '';
+                currentData.options.forEach((opt, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'student-option';
+                    btn.innerHTML = `<span class="student-option-letter">${letters[index]}</span><span class="student-option-text">${opt}</span>`;
+                    if (hasAnswered) {
+                        btn.setAttribute('disabled', 'true');
+                        if (index === currentData.correct) btn.classList.add('correct');
+                        else if (index === userPick) btn.classList.add('wrong');
+                    } else {
+                        btn.onclick = () => selectOption(index);
+                    }
+                    proOptionsContainer.appendChild(btn);
+                });
+            }
+            updateEncouragement();
+        }
+
+        function selectOption(selectedIndex) {
+            if (answersState.hasOwnProperty(currentQIndex)) return;
+            answersState[currentQIndex] = selectedIndex;
+            const currentData = quizData[currentQIndex];
+            if (selectedIndex === currentData.correct) {
+                score++;
+                document.getElementById("score-count").innerText = `النقاط: ${score}`;
+            }
+            loadQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQIndex < quizData.length - 1) {
+                currentQIndex++;
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQIndex > 0) {
+                currentQIndex--;
+                loadQuestion();
+            }
+        }
+
+        function showResult() {
+            document.getElementById("btn-prev").style.display = 'none';
+            document.getElementById("btn-next-top").style.display = 'none';
+            document.getElementById("quiz-screen").style.display = "none";
+            document.getElementById("result-screen").style.display = "block";
+            document.getElementById("final-score").innerText = `${score} / ${quizData.length}`;
+            
+            const percentage = (score / quizData.length) * 100;
+            let msg = "";
+            if (percentage >= 90) msg = "ممتاز جداً! إلمام ممتاز بالمعايير العامة.";
+            else if (percentage >= 75) msg = "أداء رائع جداً! استمر في المراجعة والتدريب.";
+            else if (percentage >= 50) msg = "أداء جيد، ينصح بمراجعة الأسئلة التي تعثرت بها.";
+            else msg = "تحتاج لمزيد من القراءة والمراجعة الدقيقة للمعايير العامة.";
+            
+            document.getElementById("result-message").innerText = msg;
+        }
+
+        function restartQuiz() {
+            document.getElementById("btn-prev").style.display = '';
+            document.getElementById("btn-next-top").style.display = '';
+            currentQIndex = 0;
+            score = 0;
+            for (let key in answersState) delete answersState[key];
+            prepareAttempt();
+            document.getElementById("score-count").innerText = `النقاط: 0`;
+            document.getElementById("result-screen").style.display = "none";
+            document.getElementById("quiz-screen").style.display = "block";
+            loadQuestion();
+        }
+
+        function exportToPDF() {
+            try {
+                const root = document.getElementById('pdf-export-root');
+                if (!root) throw new Error('وعاء تصدير PDF غير موجود.');
+                if (!Array.isArray(quizData) || !quizData.length) throw new Error('لا توجد أسئلة للتصدير.');
+
+                const qrSource = document.querySelector('.bottom-footer .qr-css');
+                const qrMarkup = qrSource ? qrSource.outerHTML : '<div style="font-size:11px;font-weight:900;color:#0f456f">QR</div>';
+
+                const esc = (text) => String(text ?? '').replace(/[&<>"']/g, ch => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                }[ch]));
+
+                const letters = ['أ','ب','ج','د','هـ','و'];
+
+                root.innerHTML = '';
+                root.style.display = 'block';
+                root.style.position = 'absolute';
+                root.style.right = '-100000px';
+                root.style.top = '0';
+                root.style.visibility = 'visible';
+
+                function createPage(pageNo) {
+                    const page = document.createElement('section');
+                    page.className = 'pdf-page';
+                    page.innerHTML = `
+                        <div class="pdf-topbar">
+                            <div class="pdf-top-pill">المعيار الأول</div>
+                            <div class="pdf-title-wrap">
+                                <div class="pdf-main-title">الرخصة المهنية عام — الالتزام بالقيم الإسلامية الوسطية</div>
+                                <div class="pdf-sub-title">المعيار الأول: الالتزام بالقيم الإسلامية الوسطية، وأخلاقيات المهنة، وتعزيز الهوية الوطنية</div>
+                            </div>
+                            <div class="pdf-meta-top">إبراهيم أبوزيد | صفحة <span class="pdf-page-no">${pageNo}</span><br>☎ <span class="pdf-ltr-inline">+966 55 783 1353</span><br>✈ <span class="pdf-ltr-inline">@myibhistoricy</span></div>
+                        </div>
+                        <div class="pdf-page-content">
+                            <div class="pdf-grid"></div>
+                        </div>
+                        <div class="pdf-footerbar pdf-lux-footer" dir="rtl">
+                            <div class="pdf-lux-item pdf-lux-name"><span class="pdf-lux-mark">★</span><span>إبراهيم أبوزيد</span></div>
+                            <div class="pdf-lux-separator"></div>
+                            <div class="pdf-lux-item"><span class="pdf-lux-mark">☎</span><b class="pdf-ltr-inline" dir="ltr">+966 55 783 1353</b></div>
+                            <div class="pdf-lux-separator"></div>
+                            <div class="pdf-lux-item"><span class="pdf-lux-mark">✈</span><b class="pdf-ltr-inline" dir="ltr">@myibhistoricy</b></div>
+                            <div class="pdf-lux-separator"></div>
+                            <div class="pdf-lux-item pdf-lux-channel">قناة الرخصة المهنية عام</div>
+                        </div>
+                    `;
+                    root.appendChild(page);
+                    return {
+                        page,
+                        grid: page.querySelector('.pdf-grid')
+                    };
+                }
+
+                function createCard(item) {
+                    const card = document.createElement('article');
+                    card.className = 'pdf-card';
+                    card.innerHTML = `
+                        <div class="pdf-card-num">${esc(item.num)}</div>
+                        <div class="pdf-card-title">${esc(item.q)}</div>
+                        <div class="pdf-card-options">
+                            ${(item.options || []).map((opt, idx) => `
+                                <div class="pdf-card-option ${idx === Number(item.correct) ? 'pdf-correct-option' : ''}">
+                                    <div class="pdf-card-letter">${letters[idx] || idx + 1}</div>
+                                    <div class="pdf-card-option-text">${esc(opt)}${idx === Number(item.correct) ? ' <span class="pdf-correct-mark">✓ الإجابة الصحيحة</span>' : ''}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    return card;
+                }
+
+                let pageCount = 1;
+                let current = createPage(pageCount);
+
+                quizData.forEach((item) => {
+                    const card = createCard(item);
+                    current.grid.appendChild(card);
+
+                    const cardBottom = card.getBoundingClientRect().bottom;
+                    const footerTop = current.page.querySelector('.pdf-footerbar').getBoundingClientRect().top;
+                    const overflow = current.grid.scrollHeight > current.grid.clientHeight + 1 || cardBottom > footerTop - 12;
+                    if (overflow) {
+                        current.grid.removeChild(card);
+                        pageCount += 1;
+                        current = createPage(pageCount);
+                        current.grid.appendChild(card);
+                    }
+                });
+
+                root.querySelectorAll('.pdf-page').forEach((page, i) => {
+                    const no = page.querySelector('.pdf-page-no');
+                    if (no) no.textContent = `${i + 1}`;
+                });
+
+                root.style.position = '';
+                root.style.right = '';
+                root.style.top = '';
+                root.style.visibility = '';
+                root.offsetHeight;
+                window.print();
+
+                // Do not clear the print tree while the browser is still generating PDF.
+                // Rebuild it on the next export; keeping it hidden outside print is harmless.
+                root.style.display = '';
+            } catch (error) {
+                alert('تعذر تصدير PDF: ' + (error.message || error));
+            }
+        }
+
+        async function exportToImage() {
+            try {
+                const blob = await renderCardBlob();
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = `الرخصة_المهنية_عام_${quizData[currentQIndex]?.num ?? 'قالب'}.png`;
+                link.href = url;
+                link.click();
+                setTimeout(() => URL.revokeObjectURL(url), 3000);
+                setImageFeedback('✓ تم تنزيل الصورة دون الأزرار ومع بيانات التواصل.');
+            } catch(e) {
+                setImageFeedback('تعذر تصدير الصورة؛ تحقق من اتصال الإنترنت.');
+            }
+        }
+
+
+        function getCardElementForImage(mode = 'auto') {
+            if (mode === 'professional') {
+                return document.getElementById('pro-student-screen') || document.getElementById('quiz-app');
+            }
+            if (mode === 'standard') {
+                return document.getElementById('quiz-app');
+            }
+            return professionalView ? (document.getElementById('pro-student-screen') || document.getElementById('quiz-app')) : document.getElementById('quiz-app');
+        }
+
+        async function renderCardBlob(mode = 'auto') {
+            if (typeof html2canvas !== 'function') throw new Error('مكتبة الصور غير متاحة.');
+            await document.fonts.ready;
+            const target = getCardElementForImage(mode);
+            const isProfessional = target.id === 'pro-student-screen';
+            const hiddenElements = [];
+            let contacts = null;
+            if (isProfessional) {
+                target.querySelectorAll('.student-action-row, .student-encourage, .student-copy-feedback').forEach(el => {
+                    hiddenElements.push([el, el.style.display]);
+                    el.style.display = 'none';
+                });
+                contacts = document.createElement('div');
+                contacts.setAttribute('dir', 'rtl');
+                contacts.style.cssText = 'margin-top:22px;padding:0;background:linear-gradient(135deg,#08203f 0%,#0e325c 60%,#0a2342 100%);border:2.5px solid #d4af37;border-radius:24px;text-align:center;color:#fff;font-family:Cairo,Almarai,sans-serif;overflow:hidden;box-shadow:0 16px 40px rgba(10,35,66,.18);';
+                contacts.innerHTML =
+                    '<div style="padding:14px 20px 8px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0));">' +
+                        '<div style="display:inline-block;background:linear-gradient(135deg,#f7d87b,#c89522);color:#10243f;border-radius:999px;padding:7px 18px;font-size:13px;font-weight:900;box-shadow:0 4px 12px rgba(212,175,55,.28);">#الرخصة-المهنية_عام</div>' +
+                        '<div style="margin-top:12px;color:#f7d87b;font-size:27px;font-weight:900;line-height:1.4;">إبراهيم أبوزيد</div>' +
+                        '<div style="margin-top:2px;color:#ffffff;font-size:17px;font-weight:800;opacity:.96;">معلم ومدرب وباحث</div>' +
+                        '<div style="margin-top:8px;color:#d9e8fb;font-size:14px;font-weight:800;">قناة الرخصة المهنية عام</div>' +
+                    '</div>' +
+                    '<div style="height:1px;background:linear-gradient(90deg,transparent,rgba(245,210,121,.85),transparent);margin:0 24px 8px;"></div>' +
+                    '<div style="padding:12px 18px 18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">' +
+                        '<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);">' +
+                            '<div style="font-size:13px;font-weight:900;color:#f5d279;margin-bottom:6px;">📢 رابط القناة</div>' +
+                            '<div dir="ltr" style="direction:ltr;unicode-bidi:isolate;font-size:13px;line-height:1.75;font-weight:800;color:#ffffff;overflow-wrap:anywhere;">t.me/+ZakELIR9__g4NmU0</div>' +
+                        '</div>' +
+                        '<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);">' +
+                            '<div style="font-size:13px;font-weight:900;color:#f5d279;margin-bottom:6px;">✈️ حساب تليجرام</div>' +
+                            '<div dir="ltr" style="direction:ltr;unicode-bidi:isolate;font-size:13px;line-height:1.75;font-weight:800;color:#ffffff;overflow-wrap:anywhere;">@myibhistoricy</div>' +
+                        '</div>' +
+                        '<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);">' +
+                            '<div style="font-size:13px;font-weight:900;color:#f5d279;margin-bottom:6px;">📞 واتساب / تواصل</div>' +
+                            '<div dir="ltr" style="direction:ltr;unicode-bidi:isolate;font-size:18px;line-height:1.6;font-weight:900;color:#ffffff;">+966 55 783 1353</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div style="padding:0 20px 18px;color:#cbdcf3;font-size:12px;font-weight:700;">محتوى تدريبي احترافي للرخصة المهنية العامة — نسخ ومشاركة جاهزة للنشر</div>';
+                target.appendChild(contacts);
+            }
+            let canvas;
+            try {
+                canvas = await html2canvas(target, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    scrollX: 0,
+                    scrollY: -window.scrollY
+                });
+            } finally {
+                hiddenElements.forEach(([el, oldDisplay]) => { el.style.display = oldDisplay; });
+                if (contacts) contacts.remove();
+            }
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            if (!blob) throw new Error('تعذر إنشاء الصورة.');
+            return blob;
+        }
+
+        function setImageFeedback(message) {
+            const ids = ['share-feedback', 'student-copy-feedback'];
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = message;
+            });
+        }
+
+        async function copyCurrentCardAsImage(mode = 'auto') {
+            setImageFeedback('جارٍ تجهيز الصورة للنسخ...');
+            try {
+                const blob = await renderCardBlob(mode);
+                if (navigator.clipboard && window.ClipboardItem) {
+                    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                    setImageFeedback('✓ تم نسخ البطاقة الحالية كصورة. يمكنك لصقها مباشرة.');
+                } else {
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.href = url;
+                    link.download = `الرخصة_المهنية_عام_سؤال_${quizData[currentQIndex]?.num ?? 'بطاقة'}.png`;
+                    link.click();
+                    setTimeout(() => URL.revokeObjectURL(url), 3000);
+                    setImageFeedback('المتصفح لا يدعم نسخ الصور مباشرة؛ تم تنزيل الصورة بدلًا من ذلك.');
+                }
+            } catch (error) {
+                setImageFeedback('تعذر نسخ الصورة من هذا المتصفح.');
+            }
+        }
+
+
+        const CHANNEL_URL = 'https://t.me/+ZakELIR9__g4NmU0';
+        function currentShareText() {
+            const item = quizData[currentQIndex];
+            if (!item) return '#الرخصة-المهنية_عام\nقناة الرخصة المهنية عام: ' + CHANNEL_URL;
+            const lines = [
+                '#الرخصة-المهنية_عام',
+                '📘 الرخصة المهنية عام | المعيار الأول',
+                'الالتزام بالقيم الإسلامية الوسطية، وأخلاقيات المهنة، وتعزيز الهوية الوطنية',
+                '',
+                `❓ السؤال ${item.num}: ${item.q}`,
+                ...item.options.map((choice, index) => `${index === item.correct ? "✅ " : ""}${letters[index]}) ${choice}${index === item.correct ? " ✔️ الإجابة الصحيحة" : ""}`),
+                '',
+                '━━━━━━━━━━━━━━',
+                '✍️ إعداد: إبراهيم أبوزيد | معلم ومدرب وباحث',
+                '📢 قناة الرخصة المهنية عام:',
+                CHANNEL_URL,
+                '✈️ حساب تليجرام: https://t.me/myibhistoricy',
+                '📞 واتساب / تواصل: \u200E+966 55 783 1353\u200E'
+            ];
+            return lines.join('\n');
+        }
+        function shareWhatsAppText() {
+            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(currentShareText()), '_blank', 'noopener,noreferrer');
+        }
+        function shareTelegramText() {
+            window.open('https://t.me/share/url?url=' + encodeURIComponent(CHANNEL_URL) + '&text=' + encodeURIComponent(currentShareText()), '_blank', 'noopener,noreferrer');
+        }
+        async function copyShareMessage() {
+            const feedback = document.getElementById('share-feedback');
+            const message = currentShareText();
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(message);
+                } else {
+                    const area = document.createElement('textarea');
+                    area.value = message;
+                    area.style.cssText = 'position:fixed;left:-9999px;top:0';
+                    document.body.appendChild(area);
+                    area.focus(); area.select();
+                    const success = document.execCommand('copy');
+                    area.remove();
+                    if (!success) throw new Error('لم يسمح المتصفح بالنسخ التلقائي');
+                }
+                feedback.textContent = '✓ تم نسخ الرسالة كاملة مع الاسم والقناة ووسائل التواصل.';
+            } catch(error) {
+                feedback.textContent = 'تعذر النسخ التلقائي؛ حدّث أذونات النسخ في المتصفح.';
+            }
+        }
+        async function shareCurrentImage() {
+            const feedback = document.getElementById('share-feedback');
+            feedback.textContent = 'جارٍ تجهيز صورة البطاقة…';
+            try {
+                if (typeof html2canvas !== 'function') throw new Error('مكتبة الصور غير متاحة؛ تحقق من الإنترنت.');
+                await document.fonts.ready;
+                const canvas = await html2canvas(document.getElementById('quiz-app'), {scale:2,useCORS:true,backgroundColor:'#ffffff'});
+                const blob = await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+                const filename = `الرخصة_المهنية_عام_سؤال_${quizData[currentQIndex].num}.png`;
+                const file = new File([blob], filename, {type:'image/png'});
+                if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
+                    await navigator.share({files:[file],title:'الرخصة المهنية عام'});
+                    feedback.textContent = 'تم فتح نافذة مشاركة الصورة.';
+                } else {
+                    const link=document.createElement('a');
+                    const url=URL.createObjectURL(blob);
+                    link.href=url;link.download=filename;link.click();
+                    setTimeout(()=>URL.revokeObjectURL(url),3000);
+                    feedback.textContent='تم تنزيل الصورة. أرفقها في واتساب أو تليجرام للمشاركة.';
+                }
+            } catch(e) { feedback.textContent = e.name==='AbortError' ? 'تم إلغاء المشاركة.' : 'تعذرت مشاركة الصورة: '+e.message; }
+        }
+
+        loadQuestion();
+    </script>
+
+<div id="pdf-export-root" class="pdf-export-root" dir="rtl"></div>
+</body>
+</html>
